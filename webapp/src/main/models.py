@@ -3,6 +3,7 @@ from django.db import models
 class AtributeName(models.Model):
     nazev = models.CharField(max_length=200, default="")
     kod = models.CharField(max_length=200, default="")
+    zobrazit = models.BooleanField(blank=True)
 
 class AttributeValue(models.Model):
     hodnota = models.CharField(max_length=200, default="")

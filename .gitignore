@@ -7,4 +7,3 @@ webapp/src/main/__pycache__
 webapp/src/db.sqlite3
 webapp/src/webapp/__pycache__
 webapp/src/main/migrations/__pycache__
-webapp/db.sqlite3

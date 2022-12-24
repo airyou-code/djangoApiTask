@@ -15,3 +15,12 @@ class AttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attribute
         fields = "__all__"
+
+
+class Serializer_class:
+    def __init__(self):
+        self.serializer_class = {
+            "Attribute": AttributeNameSerializer,
+            "AttributeValue": AttributeValueSerializer,
+            "AttributeName": AttributeNameSerializer
+        }
