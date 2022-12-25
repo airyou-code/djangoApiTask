@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from ..models import AtributeName, AttributeValue, Attribute
+from ..models import AttributeName, AttributeValue, Attribute
 
 class AttributeNameSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AtributeName
+        model = AttributeName
         fields = "__all__"
 
 class AttributeValueSerializer(serializers.ModelSerializer):
@@ -11,7 +11,7 @@ class AttributeValueSerializer(serializers.ModelSerializer):
         model = AttributeValue
         fields = "__all__"
 
-class AttributeSerializer(serializers.ModelSerializer):
+class AttributeSeritalizer(serializers.ModelSerializer):
     class Meta:
         model = Attribute
         fields = "__all__"
@@ -20,7 +20,18 @@ class AttributeSerializer(serializers.ModelSerializer):
 class Serializer_class:
     def __init__(self):
         self.serializer_class = {
-            "Attribute": AttributeNameSerializer,
+            "AttributeName": AttributeNameSerializer,
             "AttributeValue": AttributeValueSerializer,
-            "AttributeName": AttributeNameSerializer
+            "Attribute": AttributeSerializer
         }
+
+    def create_update(self, qveryset, data):
+        model = qveryset.objects.filter(id=data["id"])
+        if model:
+            data.pop("id")
+            a = model.update(**data)
+            print(a)
+        else:
+            a = qveryset.objects.create(**data)
+            print(a) 
+        pass

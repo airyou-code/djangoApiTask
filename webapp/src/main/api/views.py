@@ -1,12 +1,12 @@
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
-from .serializers import AttributeNameSerializer, AttributeValueSerializer, AttributeSerializer, Serializer_class
-from ..models import AtributeName, AttributeValue, Attribute
+from .serializers import AttributeNameSerializer, AttributeValueSerializer, AttributeSeritalizer, Serializer_class
+from ..models import AttributeName, AttributeValue, Attribute
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 # AtributeName GET requests only
-class AtributeNameAPIView(ModelViewSet):
-    queryset = AtributeName.objects.all()
+class AttributeNameAPIView(ModelViewSet):
+    queryset = AttributeName.objects.all()
     serializer_class = AttributeNameSerializer
 
 # AttributeValue GET requests only
@@ -17,7 +17,7 @@ class AttributeValueAPIView(ReadOnlyModelViewSet):
 # Attribute GET requests only
 class AttributeAPIView(ReadOnlyModelViewSet):
     queryset = Attribute.objects.all()
-    serializer_class = AttributeSerializer
+    serializer_class = AttributeSeritalizer
 
 
 class ImportAPIView(Serializer_class, APIView):
@@ -29,13 +29,19 @@ class ImportAPIView(Serializer_class, APIView):
 
             serializer = self.serializer_class[key[0]](data=value[0])
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            qveryset = self.serializer_class[key[0]].Meta().model
+
+            self.create_update(qveryset, value[0])
         
         return Response(
             {
                 "message": "OK",
             }
         )
+
+    # def validater_m(self, key, data):
+        
+
 
 
 

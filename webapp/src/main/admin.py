@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import AtributeName, AttributeValue, Attribute
+from .models import AttributeName, AttributeValue, Attribute
 
-class AtributeNameAdmin(admin.ModelAdmin):
+class AttributeNameAdmin(admin.ModelAdmin):
     list_display = ["id", "nazev"]
     search_fields = ["id", "nazev"]
     list_filter  = ["id"]
@@ -16,6 +16,6 @@ class AttributeAdmin(admin.ModelAdmin):
     list_filter  = ["id"]
 
 
-admin.site.register(AtributeName, AtributeNameAdmin)
+admin.site.register(AttributeName, AttributeNameAdmin)
 admin.site.register(AttributeValue, AttributeValueAdmin)
 admin.site.register(Attribute, AttributeAdmin)
