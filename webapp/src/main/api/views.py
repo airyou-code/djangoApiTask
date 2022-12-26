@@ -1,5 +1,5 @@
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
-from .serializers import AttributeNameSerializer, AttributeValueSerializer, AttributeSeritalizer, Serializer_class
+from .serializers import AttributeNameSerializer, AttributeValueSerializer, AttributeSerializer, Serializer_class
 from ..models import AttributeName, AttributeValue, Attribute
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,7 +17,7 @@ class AttributeValueAPIView(ReadOnlyModelViewSet):
 # Attribute GET requests only
 class AttributeAPIView(ReadOnlyModelViewSet):
     queryset = Attribute.objects.all()
-    serializer_class = AttributeSeritalizer
+    serializer_class = AttributeSerializer
 
 
 class ImportAPIView(Serializer_class, APIView):

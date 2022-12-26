@@ -11,7 +11,7 @@ class AttributeValueSerializer(serializers.ModelSerializer):
         model = AttributeValue
         fields = "__all__"
 
-class AttributeSeritalizer(serializers.ModelSerializer):
+class AttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attribute
         fields = "__all__"
@@ -32,6 +32,10 @@ class Serializer_class:
             a = model.update(**data)
             print(a)
         else:
-            a = qveryset.objects.create(**data)
+            print(data["nazev_atributu_id"])
+            a = qveryset(hodnota_atributu_id=1, nazev_atributu_id=1)
+            
+
+            # a = qveryset.objects.create(**data)
             print(a) 
         pass
