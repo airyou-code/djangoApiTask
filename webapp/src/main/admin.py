@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import AttributeName, AttributeValue, Attribute
+from .models import (
+    AttributeName, AttributeValue, Attribute,
+    Product, ProductAttributes, ProductImage,
+    Image, Catalog
+)
 
 class AttributeNameAdmin(admin.ModelAdmin):
     list_display = ["id", "nazev"]
@@ -19,3 +23,8 @@ class AttributeAdmin(admin.ModelAdmin):
 admin.site.register(AttributeName, AttributeNameAdmin)
 admin.site.register(AttributeValue, AttributeValueAdmin)
 admin.site.register(Attribute, AttributeAdmin)
+admin.site.register(Product)
+admin.site.register(ProductAttributes)
+admin.site.register(ProductImage)
+admin.site.register(Image)
+admin.site.register(Catalog)

@@ -6,11 +6,41 @@ class AttributeName(models.Model):
     zobrazit = models.BooleanField(null=True, blank=True)
 
 class AttributeValue(models.Model):
-    hodnota = models.CharField(max_length=200, default="")
+    hodnota = models.CharField(max_length=200, blank=True, null=True)
 
 class Attribute(models.Model):
-    nazev_atributu_id  = models.ForeignKey(AttributeName, on_delete=models.DO_NOTHING)
-    hodnota_atributu_id =  models.ForeignKey(AttributeValue, on_delete=models.DO_NOTHING)
+    nazev_atributu_id  = models.ForeignKey(AttributeName, on_delete=models.DO_NOTHING, blank=True, null=True)
+    hodnota_atributu_id =  models.ForeignKey(AttributeValue, on_delete=models.DO_NOTHING, blank=True, null=True)
 
     def __str__(self):
         return f"{self.id}: {self.nazev_atributu_id.nazev}, {self.hodnota_atributu_id.hodnota}"
+
+class Product(models.Model):
+    nazev = models.CharField(max_length=200, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    cena = models.IntegerField(blank=True, null=True)
+    mena = models.CharField(max_length=3, blank=True)
+    published_on = models.DateTimeField(null=True, blank=True)
+    is_published = models.BooleanField(null=True, blank=True)
+    def __str__(self):
+        return f"{self.nazev[:20]}({self.id})"
+
+class ProductAttributes(models.Model):
+    attribute = models.ForeignKey(Attribute, on_delete=models.DO_NOTHING, blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, blank=True, null=True)
+
+class Image(models.Model):
+    nazev = models.CharField(max_length=200, blank=True, null=True)
+    obrazek = models.URLField(max_length=2000, blank=True, null=True)
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, blank=True, null=True)
+    obrazek_id = models.ForeignKey(Image, on_delete=models.DO_NOTHING, blank=True, null=True)
+    nazev = models.CharField(max_length=200, blank=True, null=True)
+
+class Catalog(models.Model):
+    nazev = models.CharField(max_length=200, blank=True, null=True)
+    obrazek_id = models.ForeignKey(Image, on_delete=models.DO_NOTHING, blank=True, null=True)
+    products_ids = models.ManyToManyField(Product, blank=True)
+    attributes_ids = models.ManyToManyField(Attribute, blank=True)
+

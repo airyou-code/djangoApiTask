@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from ..models import AttributeName, AttributeValue, Attribute
+from ..models import (
+    AttributeName, AttributeValue,Attribute,
+    Product, ProductAttributes, ProductImage,
+    Image, Catalog
+)
 
 class AttributeNameSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,26 +20,51 @@ class AttributeSerializer(serializers.ModelSerializer):
         model = Attribute
         fields = "__all__"
 
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = "__all__"
+
+class ProductAttributesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductAttributes
+        fields = "__all__"
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = "__all__"
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = "__all__"
+
+class CatalogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Catalog
+        fields = "__all__"
 
 class Serializer_class:
     def __init__(self):
         self.serializer_class = {
             "AttributeName": AttributeNameSerializer,
             "AttributeValue": AttributeValueSerializer,
-            "Attribute": AttributeSerializer
+            "Attribute": AttributeSerializer,
+            "Product": ProductSerializer,
+            "ProductAttributes": ProductAttributesSerializer,
+            "ProductImage": ProductImageSerializer,
+            "Image": ImageSerializer,
+            "Catalog": CatalogSerializer
         }
 
-    def create_update(self, qveryset, data):
-        model = qveryset.objects.filter(id=data["id"])
-        if model:
-            data.pop("id")
-            a = model.update(**data)
-            print(a)
-        else:
-            print(data["nazev_atributu_id"])
-            a = qveryset(hodnota_atributu_id=1, nazev_atributu_id=1)
-            
-
-            # a = qveryset.objects.create(**data)
-            print(a) 
-        pass
+    # def create_update(self, qveryset, serializer, data):
+    #     model = qveryset.objects.filter(id=data["id"])
+    #     if model:
+    #         data.pop("id")
+    #         a = model.update(**data)
+    #         print(a)
+    #     else:
+    #         print(serializer.validated_data)
+    #         # a = qveryset.objects.create(**data)
+    #     pass

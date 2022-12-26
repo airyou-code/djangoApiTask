@@ -1,11 +1,12 @@
-from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from .serializers import AttributeNameSerializer, AttributeValueSerializer, AttributeSerializer, Serializer_class
 from ..models import AttributeName, AttributeValue, Attribute
+from django.core.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 # AtributeName GET requests only
-class AttributeNameAPIView(ModelViewSet):
+class AttributeNameAPIView(ReadOnlyModelViewSet):
     queryset = AttributeName.objects.all()
     serializer_class = AttributeNameSerializer
 
@@ -15,31 +16,34 @@ class AttributeValueAPIView(ReadOnlyModelViewSet):
     serializer_class = AttributeValueSerializer
 
 # Attribute GET requests only
-class AttributeAPIView(ReadOnlyModelViewSet):
+class AttributeAPIView(ModelViewSet):
     queryset = Attribute.objects.all()
     serializer_class = AttributeSerializer
 
-
 class ImportAPIView(Serializer_class, APIView):
     def post(self, request):
-        json_data = request.data
-        for i in json_data:
-            *key, = i
-            *value, = i.values()
+        for i in request.data:
+            key, value = list(i.items())[0]
+            id = value.pop("id")
 
-            serializer = self.serializer_class[key[0]](data=value[0])
-            serializer.is_valid(raise_exception=True)
-            qveryset = self.serializer_class[key[0]].Meta().model
+            serializer = self.serializer_class[key](data=value) #!!!! checking that the key exists, get()
+            if not serializer.is_valid():
+                return Response(
+                    {
+                        ValidationError(serializer.errors)
+                    }
+                )
 
-            self.create_update(qveryset, value[0])
+            qveryset = self.serializer_class[key].Meta().model
+            validData = serializer.validated_data
+            serializer.save()
+            # qveryset.objects.update_or_create(id=id, defaults=serializer.validated_data)
         
         return Response(
             {
                 "message": "OK",
             }
         )
-
-    # def validater_m(self, key, data):
         
 
 
