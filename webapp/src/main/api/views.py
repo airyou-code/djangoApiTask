@@ -50,18 +50,9 @@ class CatalogAPIView(ReadOnlyModelViewSet):
     queryset = CatalogSerializer.Meta().model.objects.all()
     serializer_class = CatalogSerializer
 
-
+# Import [POST] requests only
 class ImportAPIView(Serializer_class, APIView):
     """ Endpoint for all models
-        it processes json in the following format:
-        [
-            {
-                "model name": {
-                    "column 1": "data",
-                    "column 2": ["data", "data"]
-                }
-            },{...}
-        ]
 
     Args:
         APIView (_type_): post
@@ -74,6 +65,7 @@ class ImportAPIView(Serializer_class, APIView):
         self.error = {"message": message, "status": error_code}
 
     def post(self, request):
+        
         self.error_handler()
         if type(request.data) == list:
             for i in request.data:
