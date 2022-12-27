@@ -1,50 +1,76 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
-from .serializers import AttributeNameSerializer, AttributeValueSerializer, AttributeSerializer, Serializer_class
-from ..models import AttributeName, AttributeValue, Attribute
+from .serializers import (
+    AttributeNameSerializer, AttributeValueSerializer, AttributeSerializer,
+    ProductSerializer, ProductAttributesSerializer, ProductImageSerializer,
+    ImageSerializer, CatalogSerializer, Serializer_class
+)
+
 from django.core.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import  status
 
 # AtributeName GET requests only
 class AttributeNameAPIView(ReadOnlyModelViewSet):
-    queryset = AttributeName.objects.all()
+    queryset = AttributeNameSerializer.Meta().model.objects.all()
     serializer_class = AttributeNameSerializer
 
 # AttributeValue GET requests only
 class AttributeValueAPIView(ReadOnlyModelViewSet):
-    queryset = AttributeValue.objects.all()
+    queryset = AttributeValueSerializer.Meta().model.objects.all()
     serializer_class = AttributeValueSerializer
 
 # Attribute GET requests only
-class AttributeAPIView(ModelViewSet):
-    queryset = Attribute.objects.all()
+class AttributeAPIView(ReadOnlyModelViewSet):
+    queryset = AttributeSerializer.Meta().model.objects.all()
     serializer_class = AttributeSerializer
 
 class ImportAPIView(Serializer_class, APIView):
+    def error_handler(self, message="Invalid input data type", error_code=status.HTTP_400_BAD_REQUEST):
+        self.error = {"message": message, "status": error_code}
+
     def post(self, request):
-        for i in request.data:
-            key, value = list(i.items())[0]
-            id = value.pop("id")
+        self.error_handler()
+        if type(request.data) == list:
+            for i in request.data:
+                if type(i) != dict:
+                    self.error_handler("Invalid input data type, expected 'dict'", status.HTTP_400_BAD_REQUEST)
+                    break
+                key, value = list(i.items())[0]
+                id = value.pop("id", None)
 
-            serializer = self.serializer_class[key](data=value) #!!!! checking that the key exists, get()
-            if not serializer.is_valid():
-                return Response(
-                    {
-                        ValidationError(serializer.errors)
-                    }
-                )
+                serializer_class = self.get_serializer.get(key)
+                if not serializer_class:
+                    self.error_handler(f"Model '{key}' not found")
+                    break
 
-            qveryset = self.serializer_class[key].Meta().model
-            validData = serializer.validated_data
-            serializer.save()
-            # qveryset.objects.update_or_create(id=id, defaults=serializer.validated_data)
-        
+                serializer = serializer_class(data=value)
+                if not serializer.is_valid():
+                    self.error_handler(ValidationError(serializer.errors))
+                    break
+
+                if not id:
+                    serializer.save()
+                    self.error_handler("Ok", status.HTTP_201_CREATED)
+                    continue
+
+                model = self.get_serializer[key].Meta().model
+                try:
+                    model.objects.update_or_create(id=id, defaults=serializer.validated_data)
+
+                except TypeError:
+                    serializer_class.Meta().update_create_MMF(id, serializer.validated_data)
+
+                except Exception as e:
+                    self.error_handler(ValidationError(e))
+
+                self.error_handler("Ok", status.HTTP_201_CREATED)
+
         return Response(
             {
-                "message": "OK",
-            }
+                "message": self.error["message"],
+            }, status=self.error["status"],
         )
-        
 
 
 

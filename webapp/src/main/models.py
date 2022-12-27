@@ -43,4 +43,3 @@ class Catalog(models.Model):
     obrazek_id = models.ForeignKey(Image, on_delete=models.DO_NOTHING, blank=True, null=True)
     products_ids = models.ManyToManyField(Product, blank=True)
     attributes_ids = models.ManyToManyField(Attribute, blank=True)
-

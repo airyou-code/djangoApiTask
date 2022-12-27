@@ -45,9 +45,21 @@ class CatalogSerializer(serializers.ModelSerializer):
         model = Catalog
         fields = "__all__"
 
+        def update_create_MMF(self, id, validated_data):
+            products = validated_data.pop("products_ids", None)
+            attributes = validated_data.pop("attributes_ids", None)
+
+            catalog = self.model.objects.update_or_create(id=id, defaults=validated_data)[0]
+            if products:
+                catalog.products_ids.clear()
+                catalog.products_ids.add(*products)
+            if attributes:
+                catalog.attributes_ids.clear()
+                catalog.attributes_ids.add(*attributes)
+
 class Serializer_class:
-    def __init__(self):
-        self.serializer_class = {
+    def __init__(self) -> None:
+        self.get_serializer = {
             "AttributeName": AttributeNameSerializer,
             "AttributeValue": AttributeValueSerializer,
             "Attribute": AttributeSerializer,
@@ -57,14 +69,3 @@ class Serializer_class:
             "Image": ImageSerializer,
             "Catalog": CatalogSerializer
         }
-
-    # def create_update(self, qveryset, serializer, data):
-    #     model = qveryset.objects.filter(id=data["id"])
-    #     if model:
-    #         data.pop("id")
-    #         a = model.update(**data)
-    #         print(a)
-    #     else:
-    #         print(serializer.validated_data)
-    #         # a = qveryset.objects.create(**data)
-    #     pass
