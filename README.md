@@ -14,13 +14,49 @@ API-REST that will accept and analyze a specific JSON data format
           $ python webapp/src/manage.py runserver
 
 To create an **superuser account**, use this command:
-        
-          $ python webapp/src/manage.py createsuperuser
 
+          $ python webapp/src/manage.py createsuperuser
 
 ## API logic
 
 ### Import
+
+```http
+POST http://127.0.0.1:8000/import/ + json
+```
+ 
+ - if 'id' is not specified, a new record will be created in the table whis new id
+ - if 'id' is specified and exists in table, then change the existing row, if not, then create a new one with the specified id
+ 
+ json format(each model has its own data structure):
+ 
+```json
+[
+   "ModelName": {
+      "id": 1, 
+      "column1": "data",
+      "column2": "data"
+   }  
+]
+```
+
+json exempl:
+```json
+   "Catalog": {
+      "id": 1,
+      "nazev": "Výprodej 2018",
+      "obrazek_id": 4,
+      "products_ids": [
+         "product.id",
+         "..."
+      ],
+      "attributes_ids": [
+         "attribute.id",
+         "..."
+      ]
+   }
+```
+
 
 
 
@@ -32,7 +68,7 @@ To create an **superuser account**, use this command:
 
 ## Project file structure
 
-```
+```bash
 .
 ├── test_data.json
 └── webapp
@@ -47,7 +83,6 @@ To create an **superuser account**, use this command:
         │   │   └── views.py
         │   ├── apps.py
         │   ├── migrations
-        │   │   ├── 0001_initial.py
         │   │   └── __init__.py
         │   ├── models.py
         │   ├── tests.py
