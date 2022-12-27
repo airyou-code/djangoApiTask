@@ -10,22 +10,66 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import  status
 
-# AtributeName GET requests only
+# AtributeName [GET] requests only
 class AttributeNameAPIView(ReadOnlyModelViewSet):
     queryset = AttributeNameSerializer.Meta().model.objects.all()
     serializer_class = AttributeNameSerializer
 
-# AttributeValue GET requests only
+# AttributeValue [GET] requests only
 class AttributeValueAPIView(ReadOnlyModelViewSet):
     queryset = AttributeValueSerializer.Meta().model.objects.all()
     serializer_class = AttributeValueSerializer
 
-# Attribute GET requests only
+# Attribute [GET] requests only
 class AttributeAPIView(ReadOnlyModelViewSet):
     queryset = AttributeSerializer.Meta().model.objects.all()
     serializer_class = AttributeSerializer
 
+# Product [GET] requests only
+class ProductAPIView(ReadOnlyModelViewSet):
+    queryset = ProductSerializer.Meta().model.objects.all()
+    serializer_class = ProductSerializer
+
+# ProductAttributes [GET] requests only
+class ProductAttributesAPIView(ReadOnlyModelViewSet):
+    queryset = ProductAttributesSerializer.Meta().model.objects.all()
+    serializer_class = ProductAttributesSerializer
+
+# ProductImage [GET] requests only
+class ProductImageAPIView(ReadOnlyModelViewSet):
+    queryset = ProductImageSerializer.Meta().model.objects.all()
+    serializer_class = ProductImageSerializer
+
+# Image [GET] requests only
+class ImageAPIView(ReadOnlyModelViewSet):
+    queryset = ImageSerializer.Meta().model.objects.all()
+    serializer_class = ImageSerializer
+
+# Catalog [GET] requests only
+class CatalogAPIView(ReadOnlyModelViewSet):
+    queryset = CatalogSerializer.Meta().model.objects.all()
+    serializer_class = CatalogSerializer
+
+
 class ImportAPIView(Serializer_class, APIView):
+    """ Endpoint for all models
+        it processes json in the following format:
+        [
+            {
+                "model name": {
+                    "column 1": "data",
+                    "column 2": ["data", "data"]
+                }
+            },{...}
+        ]
+
+    Args:
+        APIView (_type_): post
+
+    Returns:
+        str: status message
+        code: status code
+    """
     def error_handler(self, message="Invalid input data type", error_code=status.HTTP_400_BAD_REQUEST):
         self.error = {"message": message, "status": error_code}
 
@@ -57,7 +101,6 @@ class ImportAPIView(Serializer_class, APIView):
                 model = self.get_serializer[key].Meta().model
                 try:
                     model.objects.update_or_create(id=id, defaults=serializer.validated_data)
-
                 except TypeError:
                     serializer_class.Meta().update_create_MMF(id, serializer.validated_data)
 

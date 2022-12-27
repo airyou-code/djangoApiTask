@@ -44,7 +44,10 @@ class CatalogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Catalog
         fields = "__all__"
-
+        """
+            method to solve the problem: 
+            update_or_create() cannot save data to fields ManyToManyField
+        """
         def update_create_MMF(self, id, validated_data):
             products = validated_data.pop("products_ids", None)
             attributes = validated_data.pop("attributes_ids", None)
