@@ -65,12 +65,12 @@ class ImportAPIView(Serializer_class, APIView):
         self.error = {"message": message, "status": error_code}
 
     def post(self, request):
-        
+
         self.error_handler()
-        if type(request.data) == list:
+        if type(request.data) == list or type(request.data) == dict:
             for i in request.data:
                 if type(i) != dict:
-                    self.error_handler("Invalid input data type, expected 'dict'", status.HTTP_400_BAD_REQUEST)
+                    self.error_handler("Invalid input data type, expected 'dict'")
                     break
                 key, value = list(i.items())[0]
                 id = value.pop("id", None)
@@ -91,6 +91,8 @@ class ImportAPIView(Serializer_class, APIView):
                     continue
 
                 model = self.get_serializer[key].Meta().model
+                # update_or_create() the function cannot work with fields ManyToManyField
+                # it returns an error 'TypeError', because of this, a metod update_create_MMF() was created
                 try:
                     model.objects.update_or_create(id=id, defaults=serializer.validated_data)
                 except TypeError:

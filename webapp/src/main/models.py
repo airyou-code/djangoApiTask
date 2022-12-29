@@ -5,8 +5,13 @@ class AttributeName(models.Model):
     kod = models.CharField(max_length=200, null=True, blank=True)
     zobrazit = models.BooleanField(null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.id}: {self.nazev}"
+
 class AttributeValue(models.Model):
     hodnota = models.CharField(max_length=200, blank=True, null=True)
+    def __str__(self):
+        return f"{self.id}: {self.hodnota}"
 
 class Attribute(models.Model):
     nazev_atributu_id  = models.ForeignKey(AttributeName, on_delete=models.DO_NOTHING, blank=True, null=True)
@@ -23,7 +28,7 @@ class Product(models.Model):
     published_on = models.DateTimeField(null=True, blank=True)
     is_published = models.BooleanField(null=True, blank=True)
     def __str__(self):
-        return f"{self.nazev[:20]}({self.id})"
+        return f"{self.id}: {self.nazev[:20]}"
 
 class ProductAttributes(models.Model):
     attribute = models.ForeignKey(Attribute, on_delete=models.DO_NOTHING, blank=True, null=True)
